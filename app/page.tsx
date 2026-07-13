@@ -1,6 +1,7 @@
 "use client";
 import { useState, useCallback } from "react";
 import { AnalyzeResult, FileDetail, Level } from "@/lib/type";
+import styles from "./page.module.css";
 
 const MESSAGES = [
   "🔍 Fetching repo...",
@@ -107,15 +108,15 @@ export default function Home() {
   );
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "2rem 1rem", fontFamily: "sans-serif" }}>
+    <main className={styles.container}>
       {/* Header */}
-      <div style={{ marginBottom: "2rem", textAlign: "center" }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, margin: "0 0 0.5rem" }}>RepoExplainer Pro</h1>
-        <p style={{ color: "#666", margin: 0 }}>AI-powered GitHub repository analysis — powered by LLaMA 3.3</p>
+      <div className={styles.header}>
+        <h1 className={styles.title}>RepoExplainer Pro</h1>
+        <p className={styles.subtitle}>AI-powered GitHub repository analysis — powered by LLaMA 3.3</p>
       </div>
 
       {/* Input Section */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: "1.5rem" }}>
+      <div className={styles.controls}>
         <input
           type="text"
           placeholder="https://github.com/owner/repo"
@@ -123,39 +124,17 @@ export default function Home() {
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
           disabled={loading}
-          style={{
-            padding: "12px 16px",
-            fontSize: 15,
-            border: "1px solid #ddd",
-            borderRadius: 8,
-            outline: "none",
-            width: "100%",
-            boxSizing: "border-box",
-            opacity: loading ? 0.6 : 1
-          }}
+          className={styles.input}
         />
 
         {/* Level Selector */}
-        <div style={{ display: "flex", gap: 8 }}>
+        <div className={styles.levels}>
           {(["beginner", "intermediate", "advanced"] as Level[]).map((l) => (
             <button
               key={l}
               onClick={() => setLevel(l)}
               disabled={loading}
-              style={{
-                flex: 1,
-                padding: "10px 0",
-                border: "1px solid #ddd",
-                borderRadius: 8,
-                background: level === l ? "#1a1a1a" : "#fff",
-                color: level === l ? "#fff" : "#333",
-                fontWeight: level === l ? 600 : 400,
-                cursor: loading ? "not-allowed" : "pointer",
-                fontSize: 14,
-                textTransform: "capitalize",
-                transition: "all 0.15s",
-                opacity: loading ? 0.6 : 1
-              }}
+              className={`${styles.levelButton} ${level === l ? styles.active : ""}`}
             >
               {l === "beginner" ? "👶" : l === "intermediate" ? "💻" : "🧠"} {l}
             </button>
@@ -165,79 +144,35 @@ export default function Home() {
         <button
           onClick={handleAnalyze}
           disabled={loading || !url.trim()}
-          style={{
-            padding: "13px 0",
-            background: loading ? "#888" : "#1a1a1a",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            fontSize: 15,
-            fontWeight: 600,
-            cursor: loading ? "not-allowed" : "pointer",
-            transition: "background 0.2s"
-          }}
+          className={`${styles.primaryButton} ${(loading || !url.trim()) ? styles.disabled : ""}`}
         >
           {loading ? loadingMsg : "Analyze Repo →"}
         </button>
       </div>
 
       {error && (
-        <div style={{
-          background: "#fff1f1",
-          border: "1px solid #fcc",
-          borderRadius: 8,
-          padding: "12px 16px",
-          color: "#c00",
-          marginBottom: "1rem",
-          animation: "slideIn 0.3s ease"
-        }}>
-          {error}
-        </div>
+        <div className={styles.error}>{error}</div>
       )}
 
       {/* Cache indicator */}
-      {cached && (
-        <div style={{
-          background: "#f0f8ff",
-          border: "1px solid #b0d4ff",
-          borderRadius: 8,
-          padding: "8px 12px",
-          color: "#0066cc",
-          marginBottom: "1rem",
-          fontSize: 12,
-          fontWeight: 500
-        }}>
-          ⚡ Cached result (loaded instantly)
-        </div>
-      )}
+      {cached && <div className={styles.cached}>⚡ Cached result (loaded instantly)</div>}
 
       {/* Results */}
       {result && (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Top row: Summary + Tech Stack */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <Card title="📋 What it does">
-              <p style={{ margin: 0, lineHeight: 1.7, color: "#333" }}>{result.summary}</p>
-            </Card>
-            <Card title="🔧 Tech Stack">
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {result.techStack.map((t) => (
-                  <span
-                    key={t}
-                    style={{
-                      background: "#f0f0f0",
-                      borderRadius: 6,
-                      padding: "4px 10px",
-                      fontSize: 13,
-                      fontWeight: 500
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </Card>
-          </div>
+          <div className={styles.gridTwo}>
+              <Card title="📋 What it does">
+                <p className={styles.paragraph}>{result.summary}</p>
+              </Card>
+              <Card title="🔧 Tech Stack">
+                <div className={styles.tags}>
+                  {result.techStack.map((t) => (
+                    <span key={t} className={styles.tag}>{t}</span>
+                  ))}
+                </div>
+              </Card>
+            </div>
 
           {/* Key Insight */}
           <div style={{
@@ -252,60 +187,30 @@ export default function Home() {
 
           {/* How to Run */}
           <Card title="▶ How to Run">
-            <ol style={{ margin: 0, paddingLeft: 20, lineHeight: 2 }}>
+            <ol className={styles.list}>
               {result.howToRun.map((step, i) => (
-                <li key={i} style={{ color: "#333", fontSize: 14 }}>
-                  {step}
-                </li>
+                <li key={i} className={styles.listItem}>{step}</li>
               ))}
             </ol>
           </Card>
 
           {/* Files Section */}
-          <div style={{ display: "grid", gridTemplateColumns: selectedFile ? "1fr 1fr" : "1fr", gap: 16 }}>
+          <div className={selectedFile ? styles.gridSplit : styles.gridFull}>
             <Card title="📁 Files & Folders">
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: "500px", overflowY: "auto" }}>
+              <div className={styles.fileList}>
                 {result.fileExplanations.map((f) => (
                   <div
                     key={f.path}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      padding: "10px 12px",
-                      borderRadius: 8,
-                      background: selectedFile === f.path ? "#f0f0ff" : "#fafafa",
-                      border: selectedFile === f.path ? "1px solid #aaa8ff" : "1px solid #eee",
-                      gap: 12
-                    }}
+                    className={`${styles.fileItem} ${selectedFile === f.path ? styles.fileItemSelected : ""}`}
                   >
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <code style={{
-                        fontSize: 12,
-                        color: "#555",
-                        display: "block",
-                        marginBottom: 2,
-                        wordBreak: "break-all"
-                      }}>
-                        {f.path}
-                      </code>
-                      <span style={{ fontSize: 13, color: "#666" }}>{f.explanation}</span>
+                      <code className={styles.filePath}>{f.path}</code>
+                      <span className={styles.fileExplanation}>{f.explanation}</span>
                     </div>
                     <button
                       onClick={() => handleFileClick(f.path)}
                       disabled={fileLoading}
-                      style={{
-                        flexShrink: 0,
-                        fontSize: 12,
-                        padding: "4px 10px",
-                        borderRadius: 6,
-                        border: "1px solid #ddd",
-                        background: "#fff",
-                        cursor: "pointer",
-                        color: "#333",
-                        whiteSpace: "nowrap",
-                        opacity: fileLoading ? 0.6 : 1
-                      }}
+                      className={styles.smallButton}
                     >
                       Explain →
                     </button>
@@ -368,25 +273,19 @@ export default function Home() {
       )}
 
       <style>{`
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+          @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
     </main>
   );
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   return (
-    <div style={{
-      background: "#fff",
-      border: "1px solid #e5e5e5",
-      borderRadius: 10,
-      padding: "16px 20px",
-      boxShadow: "0 1px 4px rgba(0,0,0,0.05)"
-    }}>
-      <h2 style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 700 }}>{title}</h2>
+    <div className={`${styles.card} ${className || ""}`}>
+      <h2 className={styles.cardTitle}>{title}</h2>
       {children}
     </div>
   );
@@ -394,14 +293,6 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <span style={{
-      fontSize: 11,
-      fontWeight: 700,
-      textTransform: "uppercase",
-      letterSpacing: "0.06em",
-      color: "#999"
-    }}>
-      {children}
-    </span>
+    <span className={styles.label}>{children}</span>
   );
 }
