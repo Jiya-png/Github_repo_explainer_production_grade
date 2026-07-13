@@ -4,6 +4,8 @@ An AI-powered web application that automatically analyzes any public GitHub repo
 
 > Paste a GitHub URL → Get a complete explanation in seconds.
 
+THIS APPLICATION IS LIVE AT https://production-grade.vercel.app/
+
 ---
 
 ## 🎯 Problem Statement

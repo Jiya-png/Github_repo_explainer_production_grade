@@ -40,7 +40,7 @@ yarn-error.log*
 /CLAUDE.md
 /ENTERPRISE_GUIDE.md
 /Guide/*
-!Guide/README.md
+
 
 # vercel
 .vercel
